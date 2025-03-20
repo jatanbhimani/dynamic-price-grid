@@ -8,16 +8,19 @@ import { AlertCircle, Search as SearchIcon } from 'lucide-react';
 interface GridOption {
   id: string;
   name: string;
+  unit: string;
 }
 
 interface RowOption {
   id: string;
   name: string;
+  unit: string;
 }
 
 interface ColumnOption {
   id: string;
   name: string;
+  unit: string;
 }
 
 interface PriceData {
@@ -51,15 +54,18 @@ const Search: React.FC<SearchProps> = ({ grids, rows, columns, priceData }) => {
   };
 
   const getGridName = (id: string) => {
-    return grids.find(g => g.id === id)?.name || '';
+    const grid = grids.find(g => g.id === id);
+    return grid ? `${grid.name} ${grid.unit}` : '';
   };
 
   const getRowName = (id: string) => {
-    return rows.find(r => r.id === id)?.name || '';
+    const row = rows.find(r => r.id === id);
+    return row ? `${row.name} ${row.unit}` : '';
   };
 
   const getColumnName = (id: string) => {
-    return columns.find(c => c.id === id)?.name || '';
+    const column = columns.find(c => c.id === id);
+    return column ? `${column.name} ${column.unit}` : '';
   };
 
   return (
@@ -78,7 +84,7 @@ const Search: React.FC<SearchProps> = ({ grids, rows, columns, priceData }) => {
               <SelectContent>
                 {grids.map(grid => (
                   <SelectItem key={grid.id} value={grid.id}>
-                    {grid.name}
+                    {grid.name} {grid.unit}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -94,7 +100,7 @@ const Search: React.FC<SearchProps> = ({ grids, rows, columns, priceData }) => {
               <SelectContent>
                 {rows.map(row => (
                   <SelectItem key={row.id} value={row.id}>
-                    {row.name}
+                    {row.name} {row.unit}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -110,7 +116,7 @@ const Search: React.FC<SearchProps> = ({ grids, rows, columns, priceData }) => {
               <SelectContent>
                 {columns.map(column => (
                   <SelectItem key={column.id} value={column.id}>
-                    {column.name}
+                    {column.name} {column.unit}
                   </SelectItem>
                 ))}
               </SelectContent>
