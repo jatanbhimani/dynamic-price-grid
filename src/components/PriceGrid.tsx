@@ -34,7 +34,7 @@ const PriceGrid: React.FC<PriceGridProps> = ({
   onAddUnit 
 }) => {
   const [newGridName, setNewGridName] = useState<string>('');
-  const [selectedUnit, setSelectedUnit] = useState<string>(units[0]?.name || '');
+  const [selectedUnit, setSelectedUnit] = useState<string>(units.find(u => u.name === 'GB')?.name || units[0]?.name || '');
   const [newUnitName, setNewUnitName] = useState<string>('');
   const [showAddUnit, setShowAddUnit] = useState<boolean>(false);
 
@@ -54,56 +54,39 @@ const PriceGrid: React.FC<PriceGridProps> = ({
 
   return (
     <div>
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '15px' }}>RAM Options</h2>
-      <div style={{ 
-        display: 'flex', 
-        gap: '20px', 
-        perspective: '1000px',
-        marginBottom: '20px',
-        flexWrap: 'wrap'
-      }}>
+      <h2 className="text-2xl font-semibold mb-4">RAM Options</h2>
+      <div className="flex flex-wrap gap-5 mb-5 perspective-[1000px]">
         {grids.map((grid) => (
           <div
             key={grid.id}
             onClick={() => setActiveGrid(grid.id)}
+            className={`
+              p-5 border rounded-lg cursor-pointer transition-all duration-300
+              ${grid.id === activeGrid ? 'bg-blue-50 shadow-lg translate-z-[20px]' : 'bg-white shadow-sm'}
+            `}
             style={{
-              padding: '20px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              boxShadow: grid.id === activeGrid 
-                ? '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' 
-                : '0 1px 3px rgba(0, 0, 0, 0.12)',
-              backgroundColor: grid.id === activeGrid ? '#f0f9ff' : '#ffffff',
-              transform: grid.id === activeGrid ? 'translateZ(20px)' : 'translateZ(0)',
-              transition: 'all 0.3s ease',
               minWidth: '150px',
-              textAlign: 'center'
+              textAlign: 'center',
+              transform: grid.id === activeGrid ? 'translateZ(20px)' : 'translateZ(0)',
             }}
           >
-            <div style={{ fontWeight: 'bold' }}>{grid.name} {grid.unit}</div>
+            <div className="font-bold">{grid.name} {grid.unit}</div>
           </div>
         ))}
         
         {/* Add RAM option input and button */}
-        <div style={{
-          padding: '15px',
-          border: '1px dashed #e0e0e0',
-          borderRadius: '8px',
-          backgroundColor: '#ffffff',
-          width: '350px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', marginBottom: '10px' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>RAM Value</label>
+        <div className="p-4 border border-dashed rounded-lg bg-white w-[350px]">
+          <div className="flex items-end gap-3 mb-3">
+            <div className="flex-1">
+              <label className="block mb-1 text-sm">RAM Value</label>
               <Input
                 value={newGridName}
                 onChange={(e) => setNewGridName(e.target.value)}
                 placeholder="Enter value (e.g. 8)"
               />
             </div>
-            <div style={{ width: '100px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>Unit</label>
+            <div className="w-[100px]">
+              <label className="block mb-1 text-sm">Unit</label>
               <Select value={selectedUnit} onValueChange={setSelectedUnit}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select unit" />
@@ -119,18 +102,18 @@ const PriceGrid: React.FC<PriceGridProps> = ({
               </Select>
             </div>
             <Button onClick={handleAddGrid}>
-              <Plus size={16} style={{ marginRight: '5px' }} />
+              <Plus size={16} className="mr-1" />
               Add
             </Button>
           </div>
           
           {selectedUnit === 'add-new' || showAddUnit ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+            <div className="flex items-center gap-3 mt-3">
               <Input
                 value={newUnitName}
                 onChange={(e) => setNewUnitName(e.target.value)}
                 placeholder="New unit name"
-                style={{ flex: 1 }}
+                className="flex-1"
               />
               <Button onClick={handleAddUnit} variant="outline">
                 Add Unit
@@ -143,7 +126,7 @@ const PriceGrid: React.FC<PriceGridProps> = ({
               className="text-blue-500"
               onClick={() => setShowAddUnit(true)}
             >
-              <Plus size={14} style={{ marginRight: '5px' }} />
+              <Plus size={14} className="mr-1" />
               Add new unit
             </Button>
           )}

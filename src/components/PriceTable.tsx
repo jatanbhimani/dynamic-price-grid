@@ -40,10 +40,8 @@ interface PriceTableProps {
   updatePrice: (rowId: string, columnId: string, price: number) => void;
   onAddRow?: (name: string, unit: string) => void;
   onAddColumn?: (name: string, unit: string) => void;
-  colorUnits: Unit[];
-  storageUnits: Unit[];
-  onAddColorUnit: (name: string) => void;
-  onAddStorageUnit: (name: string) => void;
+  units: Unit[];
+  onAddUnit: (name: string) => void;
 }
 
 const PriceTable: React.FC<PriceTableProps> = ({ 
@@ -54,19 +52,15 @@ const PriceTable: React.FC<PriceTableProps> = ({
   updatePrice,
   onAddRow,
   onAddColumn,
-  colorUnits,
-  storageUnits,
-  onAddColorUnit,
-  onAddStorageUnit
+  units,
+  onAddUnit
 }) => {
   const [newRowName, setNewRowName] = useState<string>('');
   const [newColumnName, setNewColumnName] = useState<string>('');
-  const [selectedColorUnit, setSelectedColorUnit] = useState<string>(colorUnits[0]?.name || '');
-  const [selectedStorageUnit, setSelectedStorageUnit] = useState<string>(storageUnits[0]?.name || '');
-  const [newColorUnitName, setNewColorUnitName] = useState<string>('');
-  const [newStorageUnitName, setNewStorageUnitName] = useState<string>('');
-  const [showAddColorUnit, setShowAddColorUnit] = useState<boolean>(false);
-  const [showAddStorageUnit, setShowAddStorageUnit] = useState<boolean>(false);
+  const [selectedColorUnit, setSelectedColorUnit] = useState<string>(units.find(u => u.name === 'Shade')?.name || units[0]?.name || '');
+  const [selectedStorageUnit, setSelectedStorageUnit] = useState<string>(units.find(u => u.name === 'GB')?.name || units[0]?.name || '');
+  const [newUnitName, setNewUnitName] = useState<string>('');
+  const [showAddUnit, setShowAddUnit] = useState<boolean>(false);
   
   if (!grid) return null;
 
@@ -84,20 +78,11 @@ const PriceTable: React.FC<PriceTableProps> = ({
     }
   };
 
-  const handleAddColorUnit = () => {
-    if (!newColorUnitName.trim()) return;
-    onAddColorUnit(newColorUnitName);
-    setSelectedColorUnit(newColorUnitName);
-    setNewColorUnitName('');
-    setShowAddColorUnit(false);
-  };
-
-  const handleAddStorageUnit = () => {
-    if (!newStorageUnitName.trim()) return;
-    onAddStorageUnit(newStorageUnitName);
-    setSelectedStorageUnit(newStorageUnitName);
-    setNewStorageUnitName('');
-    setShowAddStorageUnit(false);
+  const handleAddUnit = () => {
+    if (!newUnitName.trim()) return;
+    onAddUnit(newUnitName);
+    setNewUnitName('');
+    setShowAddUnit(false);
   };
 
   return (
@@ -147,7 +132,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                           <SelectValue placeholder="Unit" />
                         </SelectTrigger>
                         <SelectContent>
-                          {storageUnits.map(unit => (
+                          {units.map(unit => (
                             <SelectItem key={unit.id} value={unit.name}>
                               {unit.name}
                             </SelectItem>
@@ -161,15 +146,15 @@ const PriceTable: React.FC<PriceTableProps> = ({
                     </Button>
                   </div>
                   
-                  {selectedStorageUnit === 'add-new' || showAddStorageUnit ? (
+                  {selectedStorageUnit === 'add-new' || showAddUnit ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Input
-                        value={newStorageUnitName}
-                        onChange={(e) => setNewStorageUnitName(e.target.value)}
+                        value={newUnitName}
+                        onChange={(e) => setNewUnitName(e.target.value)}
                         placeholder="New unit"
                         style={{ width: '100px' }}
                       />
-                      <Button onClick={handleAddStorageUnit} size="sm" variant="outline">
+                      <Button onClick={handleAddUnit} size="sm" variant="outline">
                         Add
                       </Button>
                     </div>
@@ -178,7 +163,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                       variant="ghost" 
                       size="sm" 
                       className="text-blue-500"
-                      onClick={() => setShowAddStorageUnit(true)}
+                      onClick={() => setShowAddUnit(true)}
                     >
                       <Plus size={14} /> Add unit
                     </Button>
@@ -251,7 +236,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                           <SelectValue placeholder="Unit" />
                         </SelectTrigger>
                         <SelectContent>
-                          {colorUnits.map(unit => (
+                          {units.map(unit => (
                             <SelectItem key={unit.id} value={unit.name}>
                               {unit.name}
                             </SelectItem>
@@ -266,15 +251,15 @@ const PriceTable: React.FC<PriceTableProps> = ({
                     </Button>
                   </div>
                   
-                  {selectedColorUnit === 'add-new' || showAddColorUnit ? (
+                  {selectedColorUnit === 'add-new' || showAddUnit ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Input
-                        value={newColorUnitName}
-                        onChange={(e) => setNewColorUnitName(e.target.value)}
+                        value={newUnitName}
+                        onChange={(e) => setNewUnitName(e.target.value)}
                         placeholder="New unit name"
                         style={{ width: '150px' }}
                       />
-                      <Button onClick={handleAddColorUnit} size="sm" variant="outline">
+                      <Button onClick={handleAddUnit} size="sm" variant="outline">
                         Add Unit
                       </Button>
                     </div>
@@ -283,7 +268,7 @@ const PriceTable: React.FC<PriceTableProps> = ({
                       variant="ghost" 
                       size="sm" 
                       className="text-blue-500"
-                      onClick={() => setShowAddColorUnit(true)}
+                      onClick={() => setShowAddUnit(true)}
                     >
                       <Plus size={14} style={{ marginRight: '5px' }} />
                       Add new unit

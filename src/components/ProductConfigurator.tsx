@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import PriceGrid from './PriceGrid';
 import PriceTable from './PriceTable';
@@ -37,22 +36,15 @@ interface Unit {
 }
 
 const ProductConfigurator: React.FC = () => {
-  // Units state
-  const [ramUnits, setRamUnits] = useState<Unit[]>([
+  // Common units state for all options
+  const [units, setUnits] = useState<Unit[]>([
     { id: 'unit1', name: 'GB' },
-    { id: 'unit2', name: 'MB' }
+    { id: 'unit2', name: 'MB' },
+    { id: 'unit3', name: 'TB' },
+    { id: 'unit4', name: 'Shade' },
+    { id: 'unit5', name: 'Variant' }
   ]);
   
-  const [colorUnits, setColorUnits] = useState<Unit[]>([
-    { id: 'unit1', name: 'Shade' },
-    { id: 'unit2', name: 'Variant' }
-  ]);
-  
-  const [storageUnits, setStorageUnits] = useState<Unit[]>([
-    { id: 'unit1', name: 'GB' },
-    { id: 'unit2', name: 'TB' }
-  ]);
-
   // State for grids (e.g. RAM options)
   const [grids, setGrids] = useState<GridOption[]>([
     { id: 'grid1', name: '4', unit: 'GB' },
@@ -132,26 +124,12 @@ const ProductConfigurator: React.FC = () => {
     setColumns([...columns, { id: newId, name, unit }]);
   };
 
-  // Add new unit
-  const addRamUnit = (name: string) => {
+  // Add new unit shared across all options
+  const addUnit = (name: string) => {
     if (!name.trim()) return;
     
     const newId = `unit${Date.now()}`;
-    setRamUnits([...ramUnits, { id: newId, name }]);
-  };
-
-  const addColorUnit = (name: string) => {
-    if (!name.trim()) return;
-    
-    const newId = `unit${Date.now()}`;
-    setColorUnits([...colorUnits, { id: newId, name }]);
-  };
-
-  const addStorageUnit = (name: string) => {
-    if (!name.trim()) return;
-    
-    const newId = `unit${Date.now()}`;
-    setStorageUnits([...storageUnits, { id: newId, name }]);
+    setUnits([...units, { id: newId, name }]);
   };
 
   // Update price for a cell
@@ -180,8 +158,8 @@ const ProductConfigurator: React.FC = () => {
           activeGrid={activeGrid} 
           setActiveGrid={setActiveGrid} 
           onAddGrid={addGrid}
-          units={ramUnits}
-          onAddUnit={addRamUnit}
+          units={units}
+          onAddUnit={addUnit}
         />
       </div>
       
@@ -196,10 +174,8 @@ const ProductConfigurator: React.FC = () => {
               updatePrice={(rowId, columnId, price) => updatePrice(activeGrid, rowId, columnId, price)}
               onAddRow={addRow}
               onAddColumn={addColumn}
-              colorUnits={colorUnits}
-              storageUnits={storageUnits}
-              onAddColorUnit={addColorUnit}
-              onAddStorageUnit={addStorageUnit}
+              units={units}
+              onAddUnit={addUnit}
             />
           </div>
         )}
