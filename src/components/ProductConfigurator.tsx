@@ -1,10 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import PriceGrid from './PriceGrid';
 import PriceTable from './PriceTable';
 import Search from './Search';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus } from 'lucide-react';
 
 // Define types
 interface GridOption {
@@ -57,10 +55,6 @@ const ProductConfigurator: React.FC = () => {
   // State for current selected grid
   const [activeGrid, setActiveGrid] = useState<string>('grid1');
 
-  // State for new items
-  const [newRowName, setNewRowName] = useState<string>('');
-  const [newColumnName, setNewColumnName] = useState<string>('');
-
   // Initialize price data
   useEffect(() => {
     initializePriceData();
@@ -99,21 +93,19 @@ const ProductConfigurator: React.FC = () => {
   };
 
   // Add new row
-  const addRow = () => {
-    if (!newRowName.trim()) return;
+  const addRow = (name: string) => {
+    if (!name.trim()) return;
 
     const newId = `row${Date.now()}`;
-    setRows([...rows, { id: newId, name: newRowName }]);
-    setNewRowName('');
+    setRows([...rows, { id: newId, name }]);
   };
 
   // Add new column
-  const addColumn = () => {
-    if (!newColumnName.trim()) return;
+  const addColumn = (name: string) => {
+    if (!name.trim()) return;
 
     const newId = `col${Date.now()}`;
-    setColumns([...columns, { id: newId, name: newColumnName }]);
-    setNewColumnName('');
+    setColumns([...columns, { id: newId, name }]);
   };
 
   // Update price for a cell
@@ -148,61 +140,15 @@ const ProductConfigurator: React.FC = () => {
       <div style={{ marginBottom: '30px' }}>
         {activeGrid && (
           <div>
-            <div style={{ 
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '15px'
-            }}>
-              <h2 style={{ fontSize: '1.5rem' }}>Price Table</h2>
-              
-              {/* Column Add Button */}
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Input
-                  value={newColumnName}
-                  onChange={(e) => setNewColumnName(e.target.value)}
-                  placeholder="New storage option (e.g. 512GB)"
-                  style={{ marginRight: '10px', width: '250px' }}
-                />
-                <Button onClick={addColumn}>
-                  <Plus size={16} style={{ marginRight: '5px' }} />
-                  Add Storage
-                </Button>
-              </div>
-            </div>
-            
-            <div style={{ display: 'flex' }}>
-              {/* Row Add Button as a column next to the table */}
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column',
-                justifyContent: 'center',
-                marginRight: '20px',
-                width: '300px'
-              }}>
-                <Input
-                  value={newRowName}
-                  onChange={(e) => setNewRowName(e.target.value)}
-                  placeholder="New color option (e.g. Yellow)"
-                  style={{ marginBottom: '10px' }}
-                />
-                <Button onClick={addRow}>
-                  <Plus size={16} style={{ marginRight: '5px' }} />
-                  Add Color
-                </Button>
-              </div>
-              
-              {/* Price Table */}
-              <div style={{ flexGrow: 1 }}>
-                <PriceTable 
-                  grid={grids.find(g => g.id === activeGrid)}
-                  rows={rows}
-                  columns={columns}
-                  priceData={priceData[activeGrid] || {}}
-                  updatePrice={(rowId, columnId, price) => updatePrice(activeGrid, rowId, columnId, price)}
-                />
-              </div>
-            </div>
+            <PriceTable 
+              grid={grids.find(g => g.id === activeGrid)}
+              rows={rows}
+              columns={columns}
+              priceData={priceData[activeGrid] || {}}
+              updatePrice={(rowId, columnId, price) => updatePrice(activeGrid, rowId, columnId, price)}
+              onAddRow={addRow}
+              onAddColumn={addColumn}
+            />
           </div>
         )}
       </div>

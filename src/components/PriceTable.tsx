@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 interface GridOption {
   id: string;
@@ -27,6 +29,8 @@ interface PriceTableProps {
     };
   };
   updatePrice: (rowId: string, columnId: string, price: number) => void;
+  onAddRow?: (name: string) => void;
+  onAddColumn?: (name: string) => void;
 }
 
 const PriceTable: React.FC<PriceTableProps> = ({ 
@@ -34,9 +38,28 @@ const PriceTable: React.FC<PriceTableProps> = ({
   rows, 
   columns, 
   priceData, 
-  updatePrice 
+  updatePrice,
+  onAddRow,
+  onAddColumn
 }) => {
+  const [newRowName, setNewRowName] = useState<string>('');
+  const [newColumnName, setNewColumnName] = useState<string>('');
+  
   if (!grid) return null;
+
+  const handleAddRow = () => {
+    if (newRowName.trim() && onAddRow) {
+      onAddRow(newRowName);
+      setNewRowName('');
+    }
+  };
+
+  const handleAddColumn = () => {
+    if (newColumnName.trim() && onAddColumn) {
+      onAddColumn(newColumnName);
+      setNewColumnName('');
+    }
+  };
 
   return (
     <div>
@@ -65,6 +88,20 @@ const PriceTable: React.FC<PriceTableProps> = ({
                   {column.name}
                 </th>
               ))}
+              {/* Add Column button in the header */}
+              <th style={{ padding: '12px', borderBottom: '2px solid #e0e0e0', backgroundColor: '#f0f9ff' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Input 
+                    value={newColumnName}
+                    onChange={(e) => setNewColumnName(e.target.value)}
+                    placeholder="New storage"
+                    style={{ width: '120px' }}
+                  />
+                  <Button onClick={handleAddColumn} size="sm">
+                    <Plus size={16} />
+                  </Button>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -106,8 +143,27 @@ const PriceTable: React.FC<PriceTableProps> = ({
                     />
                   </td>
                 ))}
+                {/* Empty cell to align with the add column header */}
+                <td style={{ borderBottom: '1px solid #e0e0e0' }}></td>
               </tr>
             ))}
+            {/* Add Row button as the last row */}
+            <tr style={{ backgroundColor: '#f0f9ff' }}>
+              <td colSpan={columns.length + 2} style={{ padding: '12px', borderBottom: '1px solid #e0e0e0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Input 
+                    value={newRowName}
+                    onChange={(e) => setNewRowName(e.target.value)}
+                    placeholder="New color"
+                    style={{ width: '150px' }}
+                  />
+                  <Button onClick={handleAddRow} size="sm">
+                    <Plus size={16} />
+                    Add Color
+                  </Button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
