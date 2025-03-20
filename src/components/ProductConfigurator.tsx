@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import PriceGrid from './PriceGrid';
 import PriceTable from './PriceTable';
@@ -59,7 +58,6 @@ const ProductConfigurator: React.FC = () => {
   const [activeGrid, setActiveGrid] = useState<string>('grid1');
 
   // State for new items
-  const [newGridName, setNewGridName] = useState<string>('');
   const [newRowName, setNewRowName] = useState<string>('');
   const [newColumnName, setNewColumnName] = useState<string>('');
 
@@ -93,12 +91,11 @@ const ProductConfigurator: React.FC = () => {
   };
 
   // Add new grid
-  const addGrid = () => {
-    if (!newGridName.trim()) return;
+  const addGrid = (name: string) => {
+    if (!name.trim()) return;
     
     const newId = `grid${Date.now()}`;
-    setGrids([...grids, { id: newId, name: newGridName }]);
-    setNewGridName('');
+    setGrids([...grids, { id: newId, name }]);
   };
 
   // Add new row
@@ -139,70 +136,74 @@ const ProductConfigurator: React.FC = () => {
     <div style={{ padding: '20px' }}>
       <h1 style={{ fontSize: '2rem', marginBottom: '20px' }}>Product Price Configuration</h1>
       
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-            <Input
-              value={newGridName}
-              onChange={(e) => setNewGridName(e.target.value)}
-              placeholder="New RAM option (e.g. 8GB RAM)"
-              style={{ marginRight: '10px' }}
-            />
-            <Button onClick={addGrid}>
-              <Plus size={16} style={{ marginRight: '5px' }} />
-              Add RAM
-            </Button>
-          </div>
-        </div>
-        
-        <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-            <Input
-              value={newRowName}
-              onChange={(e) => setNewRowName(e.target.value)}
-              placeholder="New color option (e.g. Yellow)"
-              style={{ marginRight: '10px' }}
-            />
-            <Button onClick={addRow}>
-              <Plus size={16} style={{ marginRight: '5px' }} />
-              Add Color
-            </Button>
-          </div>
-        </div>
-        
-        <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-            <Input
-              value={newColumnName}
-              onChange={(e) => setNewColumnName(e.target.value)}
-              placeholder="New storage option (e.g. 512GB)"
-              style={{ marginRight: '10px' }}
-            />
-            <Button onClick={addColumn}>
-              <Plus size={16} style={{ marginRight: '5px' }} />
-              Add Storage
-            </Button>
-          </div>
-        </div>
-      </div>
-
       <div style={{ marginBottom: '30px' }}>
         <PriceGrid 
           grids={grids} 
           activeGrid={activeGrid} 
           setActiveGrid={setActiveGrid} 
+          onAddGrid={addGrid}
         />
       </div>
       
       <div style={{ marginBottom: '30px' }}>
         {activeGrid && (
-          <PriceTable 
-            grid={grids.find(g => g.id === activeGrid)}
-            rows={rows}
-            columns={columns}
-            priceData={priceData[activeGrid] || {}}
-            updatePrice={(rowId, columnId, price) => updatePrice(activeGrid, rowId, columnId, price)}
-          />
+          <div>
+            <div style={{ 
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '15px'
+            }}>
+              <h2 style={{ fontSize: '1.5rem' }}>Price Table</h2>
+              
+              {/* Column Add Button */}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Input
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                  placeholder="New storage option (e.g. 512GB)"
+                  style={{ marginRight: '10px', width: '250px' }}
+                />
+                <Button onClick={addColumn}>
+                  <Plus size={16} style={{ marginRight: '5px' }} />
+                  Add Storage
+                </Button>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex' }}>
+              {/* Row Add Button as a column next to the table */}
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                justifyContent: 'center',
+                marginRight: '20px',
+                width: '300px'
+              }}>
+                <Input
+                  value={newRowName}
+                  onChange={(e) => setNewRowName(e.target.value)}
+                  placeholder="New color option (e.g. Yellow)"
+                  style={{ marginBottom: '10px' }}
+                />
+                <Button onClick={addRow}>
+                  <Plus size={16} style={{ marginRight: '5px' }} />
+                  Add Color
+                </Button>
+              </div>
+              
+              {/* Price Table */}
+              <div style={{ flexGrow: 1 }}>
+                <PriceTable 
+                  grid={grids.find(g => g.id === activeGrid)}
+                  rows={rows}
+                  columns={columns}
+                  priceData={priceData[activeGrid] || {}}
+                  updatePrice={(rowId, columnId, price) => updatePrice(activeGrid, rowId, columnId, price)}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
       
