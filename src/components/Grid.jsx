@@ -12,7 +12,7 @@ export default function Grid(props) {
       ...tabs,
       {
         key: newKey,
-        label: variantName.current,
+        value: variantName.current,
       },
     ]);
 
